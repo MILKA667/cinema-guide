@@ -8,11 +8,7 @@ function App() {
     <Router>
       <div>
         <Routes>
-          <Route path="/" element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          } />
+          <Route path="/" element={<Home />}/>
           <Route path="/login" element={<Login />} />
         </Routes>
       </div>
