@@ -12,15 +12,33 @@ function Registration(){
         const data = await res.json();
         console.log(data);
     }
+    
     const [email,setEmail] = useState("")
     const [password,setPassword] = useState("")
+    
     return (
-        <form onSubmit={e => { e.preventDefault(); register(email, password); }}>
-        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email"/>
-        <input value={password} onChange={e => setPassword(e.target.value)} type="password" placeholder="Пароль"/>
-        <button type="submit">Зарегистрироваться</button>
+        <form className="auth-form" onSubmit={e => { e.preventDefault(); register(email, password); }}>
+            <input 
+                className="form-input"
+                value={email} 
+                onChange={e => setEmail(e.target.value)} 
+                placeholder="Введите ваш email"
+                type="email"
+                required
+            />
+            <input 
+                className="form-input"
+                value={password} 
+                onChange={e => setPassword(e.target.value)} 
+                type="password" 
+                placeholder="Придумайте пароль"
+                required
+            />
+            <button className="main-button" type="submit">
+                Зарегистрироваться
+            </button>
         </form>
     );
 }
 
-export default Registration
+export default Registration;
