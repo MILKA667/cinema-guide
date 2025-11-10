@@ -1,0 +1,12 @@
+.sidebar{
+    width: 250px;
+    height: 100vh;
+    color: black;
+    border-right: 3px solid gainsboro;
+}
+
+.sidebar-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
