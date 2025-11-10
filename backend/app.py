@@ -13,10 +13,10 @@ CORS(app)
 
 def get_db_connection():
     return psycopg2.connect(
-        dbname='my_db',
-        user='milka',
-        password='SvT47_!s',
-        host='localhost'
+        dbname='cinema_guide',
+        user='editor',
+        password='qwer1234',
+        host='185.237.95.6'
     )
 
 @app.route('/api/health', methods=['GET'])
@@ -117,6 +117,38 @@ def login():
             conn.close()
 
 
+@app.route('/api/recomendation', methods=['GET'])
+def get_movies():
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        cur.execute("SELECT id, title, poster_url FROM movies ORDER BY rating DESC LIMIT 5;")
+        rows = cur.fetchall()
+
+        movies = []
+        for row in rows:
+            movies.append({
+                "id": row[0],
+                "title": row[1],
+                "poster_url": row[2]
+            })
+
+        return jsonify(movies), 200
+        
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()        
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+
