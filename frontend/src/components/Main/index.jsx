@@ -4,12 +4,29 @@ import FilmBox from "../FilmBox";
 const Main = () => {
   const [recommend_movies, setReccomendMovies] = useState([]);
   const [all_movies, setAllMovies] = useState([]);
-  useEffect(() => {
-    fetch("http://localhost:5000/api/recomendation")
-      .then((res) => res.json())
-      .then((data) => setReccomendMovies(data))
-      .catch((err) => console.log(err));
-  }, []);
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  fetch("http://localhost:5000/api/recommendations", {
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (Array.isArray(data)) {
+        setReccomendMovies(data);
+      } else {
+        console.error("Ошибка загрузки рекомендаций:", data);
+        setReccomendMovies([]);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      setReccomendMovies([]);
+    });
+}, []);
+
   
   useEffect(() => {
     fetch("http://localhost:5000/api/movies")
