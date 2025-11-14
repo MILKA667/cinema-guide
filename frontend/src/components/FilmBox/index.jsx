@@ -1,8 +1,21 @@
 import React from 'react';
 import './style.css';
 
-const FilmBox = ({ isHeader, title, poster }) => {
-  if (isHeader) {
+const FilmBox = ({ Header, title, poster, movieId }) => {
+
+  async function watch() {
+          const res = await fetch("http://localhost:5000/api/watch_movie",{
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            method: "POST",
+            body: JSON.stringify({movieId})
+        })
+        const data = await res.json();
+        console.log(data);
+    }
+
+  if (Header == 1) {
     return (
       <div className="film_card header_card">
         <p className="heading">Рекомендации</p>
@@ -11,9 +24,19 @@ const FilmBox = ({ isHeader, title, poster }) => {
       </div>
     );
   }
+  if (Header == 2) {
+    return (
+      <div className="film_card header_card">
+        <p className="heading">Все фильмы</p>
+        <p>Нажмите чтобы посмотреть</p>
+        <p>Cinema-guide</p>
+      </div>
+    );
+  }
+
 
   return (
-    <div className="film_card">
+    <div className="film_card" onClick={watch}>
       <img src={poster} alt={title} className="film_poster" />
       <div className="film_text_overlay">
         <p className="heading">{title}</p>

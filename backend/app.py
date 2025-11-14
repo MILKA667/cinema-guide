@@ -117,7 +117,7 @@ def login():
             conn.close()
 
 
-@app.route('/api/recomendation', methods=['GET'])
+@app.route('/api/movies', methods=['GET'])
 def get_movies():
     conn = None
     cur = None
@@ -125,7 +125,7 @@ def get_movies():
         conn = get_db_connection()
         cur = conn.cursor()
         
-        cur.execute("SELECT id, title, poster_url FROM movies ORDER BY rating DESC LIMIT 5;")
+        cur.execute("SELECT id, title, poster_url FROM movies ORDER BY rating DESC LIMIT 10;")
         rows = cur.fetchall()
 
         movies = []
@@ -146,7 +146,14 @@ def get_movies():
         if cur:
             cur.close()
         if conn:
-            conn.close()        
+            conn.close()       
+
+
+@app.route('/api/watch_movie', methods=['POST'])
+def watch_movie():
+    data = request.get_json()
+    return jsonify({}), 200
+
 
 
 if __name__ == '__main__':
