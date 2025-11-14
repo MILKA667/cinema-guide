@@ -11,6 +11,28 @@ app.config['SECRET_KEY'] = 'feojsngfuimnco4itui4'
 
 CORS(app)
 
+
+def get_current_user():
+    auth_header = request.headers.get('Authorization')
+    print("Authorization header:", auth_header)
+    if not auth_header:
+        return None
+    
+    try:
+        parts = auth_header.split(" ")
+        if len(parts) == 2 and parts[0] == "Bearer":
+            token = parts[1]
+        else:
+            token = auth_header 
+        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        print("Decoded payload:", payload)
+        return payload['user_id']
+    except Exception as e:
+        print("JWT decode error:", e)
+        return None
+
+
+
 def get_db_connection():
     return psycopg2.connect(
         dbname='cinema_guide',
@@ -88,7 +110,6 @@ def login():
             token = jwt.encode({
                 'user_id': user[0],
                 'email': email,
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
             }, app.config['SECRET_KEY'], algorithm='HS256')
             
             if isinstance(token, bytes):
@@ -152,7 +173,28 @@ def get_movies():
 @app.route('/api/watch_movie', methods=['POST'])
 def watch_movie():
     data = request.get_json()
-    return jsonify({}), 200
+    movie_id = data.get('movie_id')
+    
+    user_id = get_current_user()
+    if not user_id:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    conn = None
+    cur = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        return jsonify({'message': 'Movie watched recorded!'}), 200
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
+
 
 
 

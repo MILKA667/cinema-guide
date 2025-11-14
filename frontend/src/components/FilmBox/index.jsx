@@ -3,17 +3,29 @@ import './style.css';
 
 const FilmBox = ({ Header, title, poster, movieId }) => {
 
-  async function watch() {
-          const res = await fetch("http://localhost:5000/api/watch_movie",{
-            headers: {
-                'Content-Type': 'application/json',
-            },
+async function watch() {
+    const token = localStorage.getItem("token"); 
+    if (!token) {
+        console.log("No token found");
+        return;
+    }
+
+    try {
+        const res = await fetch("http://localhost:5000/api/watch_movie", {
             method: "POST",
-            body: JSON.stringify({movieId})
-        })
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ movie_id: movieId }) 
+        });
         const data = await res.json();
         console.log(data);
+    } catch (err) {
+        console.error(err);
     }
+}
+
 
   if (Header == 1) {
     return (
